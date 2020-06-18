@@ -12,7 +12,7 @@ Note: even though this setup is optimised for React apps, it can be a good start
 
 ## Getting Started
 
-Fork this repo and clone it. Change the [name](package.json#L2) field in [package.json](package.json) to make it your own. Create a a [Spotify Application client id from the Dashboard](https://developer.spotify.com/dashboard/applications) and update it in [config.json](config.json#L2). You should also add `http://localhost:3000/auth.html` and `https://<my-alias-from-now.json>` as Redirect URI:s for the app. If you want to call other endpoints, you may also have tweak the [scope](config.json#L3) key accordingly. Note that the app is built in a way which lets you develop even without adding your own app, but if you don't you'll be at the mercy of the default `client_id` specified 😈
+Fork this repo and clone it. Change the [name](package.json#L2) field in [package.json](package.json) to make it your own. Create a a [Spotify Application client id from the Dashboard](https://developer.spotify.com/dashboard/applications) and update it in [config.json](config.json#L2). You should also add `http://localhost:3000/auth.html` and /<`https:/my-alias-from-now.json>` as Redirect URI:s for the app. If you want to call other endpoints, you may also have tweak the [scope](config.json#L3) key accordingly. Note that the app is built in a way which lets you develop even without adding your own app, but if you don't you'll be at the mercy of the default `client_id` specified 😈
 
 Run `npm install` to install the dependencies, and then `npm start` to start a dev server, which should automatically open `http://localhost:3000` when the app is ready. Any saved code/styling changes will be instantly reflected in your browser.
 
