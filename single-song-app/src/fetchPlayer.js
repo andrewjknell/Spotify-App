@@ -8,7 +8,7 @@ export default async function() {
     async function onSpotifyWebPlaybackSDKReady() {
       const token = spfetch.getToken();
       const player = new global.Spotify.Player({
-        name: 'Spotify React App Template Player',
+        name: 'Spotify App',
         getOAuthToken: cb => cb(token)
       });
 

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import classes from './app.module.css';
 import Spotify from 'spotify-web-api-js';
+import LoggedIn from './Components/LoggedIn';
 
 const spotifyWebApi = new Spotify()
 
@@ -17,10 +18,6 @@ class App extends Component {
                 image: ''
             }
         }
-        if (params.access_token) {
-            spotifyWebApi.setAccessToken(params.access_token);
-            this.getNowPlaying();
-        }
     }
 
     getHashParams = () => {
@@ -33,20 +30,6 @@ class App extends Component {
         return hashParams;
     }
 
-    getNowPlaying = () => {
-        spotifyWebApi.getMyCurrentPlaybackState()
-            .then(res => {
-                console.log(res)
-                this.setState({
-                    nowPlaying: {
-                        artist: res.item.artists[0].name,
-                        track: res.item.name,
-                        image: res.item.album.images[0].url
-                    }
-                });
-            })
-    }
-
     render() {
         return (
             <div className={classes.App}>
@@ -57,10 +40,8 @@ class App extends Component {
                     <a href='http://localhost:8888'>
                         <button>Login with Spotify</button>
                     </a>
-                ) : null}
+                ) : <LoggedIn />}
 
-                <div>Artist: {this.state.nowPlaying.artist}</div>
-                <div>Track: {this.state.nowPlaying.track}</div>
 
                 <div>
                     <img src={this.state.nowPlaying.image} style={{ width: '100px' }} />
