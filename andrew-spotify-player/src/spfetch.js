@@ -5,7 +5,6 @@ const spfetch = (global.spfetch = async (input, init) => {
   if (!accessToken) await spfetch.login();
   if (!init) init = {};
   if (!init.headers) init.headers = {};
-  console.log(input, init)
   init.headers.Authorization = `Bearer ${accessToken}`;
   const response = await fetch(
     input.startsWith('https://')

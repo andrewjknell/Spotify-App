@@ -5,10 +5,15 @@
 
 .playLists {
   margin: 20px;
+  width: 300px;
 }
 
-.jumboTron {
+.body {
   display: flex;
+}
+
+.sideCard {
+  
 }
 
 .trackContainer {
@@ -29,4 +34,7 @@
   text-align: left;
   display: flex;
   flex-direction: column;
+  border-bottom: 1px solid black;
+  border-radius: 0;
+  margin-bottom: 10px;
 }

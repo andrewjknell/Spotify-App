@@ -70,7 +70,6 @@ class LoggedIn extends Component {
             return;
         }
         const { items } = await spfetch("/v1/me/playlists");
-        console.log(items)
         const newItems = items.map(res => {
             return res
         })
@@ -87,13 +86,12 @@ class LoggedIn extends Component {
     };
 
     handleNewPlaylist = async (id) => {
-        console.log(id)
         const { items } = await spfetch('/v1/playlists/' + id + '/tracks');
         const newItems = items.map(song => {
             return song.track
         })
         this.setState({ playlist: newItems })
-        this.state.player.play(newItems.map(({ uri }) => uri));
+        // this.state.player.play(newItems.map(({ uri }) => uri));
     }
 
     handlePlayPreviousTrack = () => {
@@ -110,6 +108,13 @@ class LoggedIn extends Component {
     handleClick = async () => {
         await spfetch.logout()
     };
+
+    handleSongSelect = (song) => {
+        console.log(song)
+        const newSong = []
+        newSong.push(song)
+        this.state.player.play(newSong.map(({ uri }) => uri));
+    }
 
     render() {
         const {
@@ -152,7 +157,10 @@ class LoggedIn extends Component {
 
         let pickPlaylist;
         if (this.state.playlist) {
-            pickPlaylist = <TrackResultsTable playlist={this.state.playlist} />
+            pickPlaylist = <TrackResultsTable
+                playlist={this.state.playlist}
+                clicked={(song) => this.handleSongSelect(song)}
+            />
         }
 
         return (
@@ -204,7 +212,7 @@ class LoggedIn extends Component {
                         </IconButton>
                     </Toolbar>
                 </AppBar>
-                <div className={classes.jumboTron}>
+                <div className={classes.body}>
                     <div className={classes.sideCard}>
                         <div className={classes.Card}>
                             <Card>
