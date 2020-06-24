@@ -1,17 +1,32 @@
 .Card {
-    width: 300px;
-    margin: 20px;
-  }
-  
-  .CardMedia {
-    width: 300px;
-    height: 300px;
-  }
-  
-  .grow {
-    flex-grow: 1;
-  }
+  width: 300px;
+  margin: 0 20px;
+}
 
-  .trackContainer{
-      
-  }
+.playLists {
+  margin: 20px;
+}
+
+.jumboTron {
+  display: flex;
+}
+
+.trackContainer {
+  margin-top: 50;
+  width: 80%;
+}
+
+.CardMedia {
+  width: 300px;
+  height: 300px;
+}
+
+.grow {
+  flex-grow: 1;
+}
+
+.playLists button{
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}

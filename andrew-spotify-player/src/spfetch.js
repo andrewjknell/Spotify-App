@@ -2,10 +2,10 @@ import { client_id, scope } from './config.json';
 
 let accessToken = getTokenFromUrlHash();
 const spfetch = (global.spfetch = async (input, init) => {
-  console.log(input, init, "input init2")
   if (!accessToken) await spfetch.login();
   if (!init) init = {};
   if (!init.headers) init.headers = {};
+  console.log(input, init)
   init.headers.Authorization = `Bearer ${accessToken}`;
   const response = await fetch(
     input.startsWith('https://')
@@ -18,7 +18,7 @@ const spfetch = (global.spfetch = async (input, init) => {
     }
   );
 
-  const { ok, status, statusText } = response;
+  const { ok, status } = response;
 
   let json = {};
   try {
@@ -56,7 +56,7 @@ async function fetchTokenFromPopup() {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(
       reject,
-      20000,
+      50000,
       new Error('Timeout getting token')
     );
     window.addEventListener(

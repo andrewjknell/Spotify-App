@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import fetchPlayer from '../../fetchPlayer';
 import spfetch from '../../spfetch';
+
 import classes from './LoggedIn.module.css'
+import TrackResultsTable from '../TrackList/TrackResultsTable';
 
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
@@ -21,19 +23,22 @@ import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 
 class LoggedIn extends Component {
     state = {
+        id: null,
         name: null,
         href: null,
         imageUrl: null,
         numFollowers: null,
         player: null,
         playerState: {},
-        albumImg: null
+        albumImg: null,
+        playlist: null,
+        playListSelection: null,
+        isPlayListOpen: false,
     };
 
     async componentDidMount() {
         await this.getMe();
         this.initPlayer();
-        // console.log(this.state, 'current state')
     }
 
     async initPlayer() {
@@ -45,32 +50,51 @@ class LoggedIn extends Component {
                 playerState
             }),
         );
-        console.log(this.state, 'after state')
     }
 
     async getMe() {
         const {
+            id,
             display_name: name,
             href,
             images: [{ url: imageUrl } = {}] = [],
             followers: { total: numFollowers }
         } = await spfetch('/v1/me');
-        this.setState({ name, href, imageUrl, numFollowers });
+        this.setState({ id, name, href, imageUrl, numFollowers });
         return true;
     }
 
-    handlePlayTopTracks = async () => {
-        // const { items } = await spfetch('/v1/me/playlists');
-        const { items } = await spfetch('/v1/me/top/tracks');
-        console.log(items, 'items')
-        this.state.player.play(items.map(({ uri }) => uri));
-        // let albumArt = [];
-        // for(let img in items){
-        //     albumArt.push(items[img].album.images[0].url);
-        // };
-        // this.setState({albumImg: albumArt})
-
+    handleUserPlaylists = async () => {
+        if (this.state.isPlayListOpen) {
+            this.setState({ isPlayListOpen: false });
+            return;
+        }
+        const { items } = await spfetch("/v1/me/playlists");
+        console.log(items)
+        const newItems = items.map(res => {
+            return res
+        })
+        this.setState({ playListSelection: newItems })
+        this.setState({ isPlayListOpen: true })
+        // this.state.player.play(newItems.map(({ uri }) => uri));
     };
+
+    handlePlayTopTracks = async () => {
+        const { items } = await spfetch('/v1/me/top/tracks');
+        // console.log(items, 'top playlist')
+        this.setState({ playlist: items })
+        this.state.player.play(items.map(({ uri }) => uri));
+    };
+
+    handleNewPlaylist = async (id) => {
+        console.log(id)
+        const { items } = await spfetch('/v1/playlists/' + id + '/tracks');
+        const newItems = items.map(song => {
+            return song.track
+        })
+        this.setState({ playlist: newItems })
+        this.state.player.play(newItems.map(({ uri }) => uri));
+    }
 
     handlePlayPreviousTrack = () => {
         this.state.player.previousTrack()
@@ -108,15 +132,35 @@ class LoggedIn extends Component {
         const hasPlayer = !!player;
         const hasContext = context;
 
+        let playListPickFrom;
+        if (this.state.isPlayListOpen) {
+            playListPickFrom = (
+                this.state.playListSelection.map(playlist => {
+                    // console.log(playlist)
+                    return (
+                        <Button
+                            className={classes.buttonPlaylist}
+                            key={playlist.id}
+                            onClick={() => this.handleNewPlaylist(playlist.id)}
+                        >
+                            {playlist.name}
+                        </Button>
+                    )
+                })
+            )
+        }
+
+        let pickPlaylist;
+        if (this.state.playlist) {
+            pickPlaylist = <TrackResultsTable playlist={this.state.playlist} />
+        }
+
         return (
             <div className={classes.App}>
                 <CssBaseline />
 
-                <AppBar position="static">
+                <AppBar position="static" style={{ marginBottom: 30 }}>
                     <Toolbar>
-                        {/* <div>
-                            <img src={imageUrl} />
-                        </div> */}
                         <Typography variant="h6" color="inherit">
                             {currentTrackName || 'Not playing anything'}
                         </Typography>
@@ -160,30 +204,43 @@ class LoggedIn extends Component {
                         </IconButton>
                     </Toolbar>
                 </AppBar>
+                <div className={classes.jumboTron}>
+                    <div className={classes.sideCard}>
+                        <div className={classes.Card}>
+                            <Card>
+                                <CardActionArea>
+                                    <CardMedia className={classes.CardMedia} image={imageUrl} title={name} />
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h5" component="h2">
+                                            {name}
+                                        </Typography>
+                                        <Typography component="p">Followers: {numFollowers}</Typography>
+                                    </CardContent>
+                                </CardActionArea>
+                                <CardActions>
+                                    <Button
+                                        size="small"
+                                        color="primary"
+                                        onClick={this.handlePlayTopTracks}
+                                    >
+                                        Play Top Tracks</Button>
+                                    <Button
+                                        size="small"
+                                        color="primary"
+                                        onClick={this.handleUserPlaylists}
+                                    >
+                                        {!this.state.isPlayListOpen ? "Show Playlists" : "Hide Playlists"} </Button>
+                                </CardActions>
+                            </Card>
+                        </div>
+                        <div className={classes.playLists}>
+                            {playListPickFrom}
+                        </div>
+                    </div>
 
-                <Card className={classes.Card}>
-                    <CardActionArea>
-                        <CardMedia className={classes.CardMedia} image={imageUrl} title={name} />
-                        <CardContent>
-                            <Typography gutterBottom variant="h5" component="h2">
-                                {name}
-                            </Typography>
-                            <Typography component="p">Followers: {numFollowers}</Typography>
-                        </CardContent>
-                    </CardActionArea>
-                    <CardActions>
-                        <Button
-                            size="small"
-                            color="primary"
-                            onClick={this.handlePlayTopTracks}
-                        >
-                            Get Top Tracks
-                </Button>
-                    </CardActions>
-                </Card>
-
-                <div className={classes.trackContainer}>
-                    <Button onClick={() => this.handleClick()}>Logout</Button>
+                    <div className={classes.trackContainer}>
+                        {pickPlaylist}
+                    </div>
                 </div>
             </div>
         );
