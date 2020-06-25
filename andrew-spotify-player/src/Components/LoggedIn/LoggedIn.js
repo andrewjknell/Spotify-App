@@ -20,6 +20,8 @@ import PauseIcon from '@material-ui/icons/Pause';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
 import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
+import { Input } from '@material-ui/core';
+import AlbumArt from '../Playlists/AlbumArt/AlbumArt';
 
 class LoggedIn extends Component {
     state = {
@@ -32,8 +34,9 @@ class LoggedIn extends Component {
         playerState: {},
         albumImg: null,
         playlist: null,
-        playListSelection: null,
+        allPlaylists: null,
         isPlayListOpen: false,
+        albumArt: null,
     };
 
     async componentDidMount() {
@@ -50,6 +53,8 @@ class LoggedIn extends Component {
                 playerState
             }),
         );
+        this.state.player.setVolume(.5).then(() => { });
+
     }
 
     async getMe() {
@@ -64,6 +69,11 @@ class LoggedIn extends Component {
         return true;
     }
 
+    setVolume = (event) => {
+        const vol = event.target.value;
+        this.state.player.setVolume(vol / 100).then(() => { });
+    }
+
     handleUserPlaylists = async () => {
         if (this.state.isPlayListOpen) {
             this.setState({ isPlayListOpen: false });
@@ -73,7 +83,7 @@ class LoggedIn extends Component {
         const newItems = items.map(res => {
             return res
         })
-        this.setState({ playListSelection: newItems })
+        this.setState({ allPlaylists: newItems })
         this.setState({ isPlayListOpen: true })
         // this.state.player.play(newItems.map(({ uri }) => uri));
     };
@@ -92,6 +102,15 @@ class LoggedIn extends Component {
         })
         this.setState({ playlist: newItems })
         // this.state.player.play(newItems.map(({ uri }) => uri));
+    }
+
+    handleSelectedPlaylist = async (id) => {
+        const { items } = await spfetch('/v1/playlists/' + id + '/tracks');
+        const newItems = items.map(song => {
+            return song.track
+        })
+        // this.setState({ playlist: newItems })
+        this.state.player.play(newItems.map(({ uri }) => uri));
     }
 
     handlePlayPreviousTrack = () => {
@@ -114,7 +133,12 @@ class LoggedIn extends Component {
         const newSong = []
         newSong.push(song)
         this.state.player.play(newSong.map(({ uri }) => uri));
+        this.setState({ imageUrl: song.album.images[0].url })
     }
+
+    // inputChangeHandler = (event) => {
+    //     console.log(event.target.value)
+    // }
 
     render() {
         const {
@@ -140,27 +164,39 @@ class LoggedIn extends Component {
         let playListPickFrom;
         if (this.state.isPlayListOpen) {
             playListPickFrom = (
-                this.state.playListSelection.map(playlist => {
+                this.state.allPlaylists.map(playlist => {
                     // console.log(playlist)
                     return (
-                        <Button
-                            className={classes.buttonPlaylist}
-                            key={playlist.id}
-                            onClick={() => this.handleNewPlaylist(playlist.id)}
-                        >
-                            {playlist.name}
-                        </Button>
+                        <div className={classes.listPlay}>
+                            <button onClick={() => this.handleSelectedPlaylist(playlist.id)}>play</button>
+                            <Button
+                                className={classes.buttonPlaylist}
+                                key={playlist.id}
+                                onClick={() => this.handleNewPlaylist(playlist.id)}
+                            >
+                                {playlist.name}
+                            </Button>
+                        </div>
                     )
                 })
             )
         }
 
         let pickPlaylist;
+        let albumArtCover;
         if (this.state.playlist) {
-            pickPlaylist = <TrackResultsTable
-                playlist={this.state.playlist}
-                clicked={(song) => this.handleSongSelect(song)}
-            />
+            pickPlaylist = (
+                <TrackResultsTable
+                    playlist={this.state.playlist}
+                    clicked={(song) => this.handleSongSelect(song)}
+                />
+            );
+            albumArtCover = (
+                <AlbumArt
+                    covers={this.state.playlist}
+                    clicked={(song) => this.handleSongSelect(song)}
+                />
+            )
         }
 
         return (
@@ -172,8 +208,13 @@ class LoggedIn extends Component {
                         <Typography variant="h6" color="inherit">
                             {currentTrackName || 'Not playing anything'}
                         </Typography>
-
                         <div className={classes.grow} />
+                        <input
+                            type="range"
+                            min="1"
+                            max="100"
+                            onChange={(event) => this.setVolume(event)}
+                        />
 
                         <IconButton
                             color="inherit"
@@ -245,9 +286,13 @@ class LoggedIn extends Component {
                             {playListPickFrom}
                         </div>
                     </div>
-
-                    <div className={classes.trackContainer}>
-                        {pickPlaylist}
+                    <div>
+                        <div className={classes.allAlbums}>
+                            {albumArtCover}
+                        </div>
+                        <div className={classes.trackContainer}>
+                            {pickPlaylist}
+                        </div>
                     </div>
                 </div>
             </div>

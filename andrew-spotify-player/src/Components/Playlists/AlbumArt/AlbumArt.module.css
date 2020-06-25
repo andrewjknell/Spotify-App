@@ -1,0 +1,16 @@
+.albumArtCover img {
+    height: 70px;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+}
+
+.albumArtCover img:hover {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.albumArtCover {
+    width: 100%;
+}

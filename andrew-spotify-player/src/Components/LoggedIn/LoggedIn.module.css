@@ -3,9 +3,10 @@
   margin: 0 20px;
 }
 
+
 .playLists {
   margin: 20px;
-  width: 300px;
+  width: 350px;
 }
 
 .body {
@@ -30,7 +31,7 @@
   flex-grow: 1;
 }
 
-.playLists button{
+.playLists button {
   text-align: left;
   display: flex;
   flex-direction: column;
