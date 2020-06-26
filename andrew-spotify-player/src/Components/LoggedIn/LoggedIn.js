@@ -10,7 +10,6 @@ import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import IconButton from '@material-ui/core/IconButton';
@@ -20,21 +19,18 @@ import PauseIcon from '@material-ui/icons/Pause';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
 import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
-import { Input } from '@material-ui/core';
 import AlbumArt from '../Playlists/AlbumArt/AlbumArt';
 
 class LoggedIn extends Component {
     state = {
         id: null,
-        name: null,
         href: null,
         imageUrl: null,
-        numFollowers: null,
         player: null,
         playerState: {},
         albumImg: null,
         playlist: null,
-        allPlaylists: null,
+        pickedPlaylist: null,
         isPlayListOpen: false,
         albumArt: null,
     };
@@ -74,18 +70,33 @@ class LoggedIn extends Component {
         this.state.player.setVolume(vol / 100).then(() => { });
     }
 
-    handleUserPlaylists = async () => {
+    searchPlaylists = async () => {
+        const { playlists } = await spfetch("/v1/browse/categories/blackhistorymonth/playlists");
+    }
+
+    handlepickedPlaylist = async (playlist) => {
         if (this.state.isPlayListOpen) {
             this.setState({ isPlayListOpen: false });
             return;
         }
-        const { items } = await spfetch("/v1/me/playlists");
-        const newItems = items.map(res => {
-            return res
-        })
-        this.setState({ allPlaylists: newItems })
-        this.setState({ isPlayListOpen: true })
-        // this.state.player.play(newItems.map(({ uri }) => uri));
+
+        if (playlist === 'blm') {
+            const { playlists } = await spfetch("/v1/search?q=%22black%20lives%20matter&type=playlist&market=US&limit=15");
+            const newItems = playlists.items.map(res => {
+                return res
+            });
+            this.setState({ pickedPlaylist: newItems })
+            this.setState({ isPlayListOpen: true })
+
+        } else if (playlist === 'me') {
+            const { items } = await spfetch("/v1/me/playlists");
+            const newItems = items.map(res => {
+                return res
+            });
+            this.setState({ pickedPlaylist: newItems })
+            this.setState({ isPlayListOpen: true })
+
+        }
     };
 
     handlePlayTopTracks = async () => {
@@ -109,47 +120,45 @@ class LoggedIn extends Component {
         const newItems = items.map(song => {
             return song.track
         })
-        // this.setState({ playlist: newItems })
+        this.setState({ playlist: newItems })
         this.state.player.play(newItems.map(({ uri }) => uri));
+        this.state.player.getCurrentState()
+            .then(res => {
+                console.log(res)
+            })
     }
 
-    handlePlayPreviousTrack = () => {
-        this.state.player.previousTrack()
-    };
-
-    handlePlayNextTrack = () => {
-        this.state.player.nextTrack()
-    };
-
-    handleResume = () => this.state.player.resume();
-    handlePause = () => this.state.player.pause();
-
-    handleClick = async () => {
-        await spfetch.logout()
-    };
-
     handleSongSelect = (song) => {
-        console.log(song)
         const newSong = []
         newSong.push(song)
         this.state.player.play(newSong.map(({ uri }) => uri));
-        this.setState({ imageUrl: song.album.images[0].url })
+        this.setState({ imageUrl: song.album.images[0].url });
     }
 
-    // inputChangeHandler = (event) => {
-    //     console.log(event.target.value)
-    // }
+    toggleShuffle = (shuff) => {
+
+    }
+
+    handlePlayPreviousTrack = () => this.state.player.previousTrack();
+    handlePlayNextTrack = () => this.state.player.nextTrack();;
+    handleResume = () => this.state.player.resume();
+    handlePause = () => this.state.player.pause();
+
+    // handleClick = async () => {
+    //     await spfetch.logout()
+    // };
+
 
     render() {
         const {
             name,
             imageUrl,
-            numFollowers,
             player,
             playerState: {
                 paused = true,
                 context,
-                track_window: { current_track: { name: currentTrackName } = {} } = {},
+                track_window: { 
+                    current_track: { name: currentTrackName } = {} } = {},
                 restrictions: {
                     disallow_pausing_reasons: [pauseRestrictedReason] = [],
                     disallow_skipping_prev_reasons: [skipPreviousRestrictedReason] = [],
@@ -164,14 +173,13 @@ class LoggedIn extends Component {
         let playListPickFrom;
         if (this.state.isPlayListOpen) {
             playListPickFrom = (
-                this.state.allPlaylists.map(playlist => {
+                this.state.pickedPlaylist.map(playlist => {
                     // console.log(playlist)
                     return (
-                        <div className={classes.listPlay}>
-                            <button onClick={() => this.handleSelectedPlaylist(playlist.id)}>play</button>
+                        <div key={playlist.id} className={classes.listPlay}>
+                            {/* <button onClick={() => this.handleSelectedPlaylist(playlist.id)}>play</button> */}
                             <Button
                                 className={classes.buttonPlaylist}
-                                key={playlist.id}
                                 onClick={() => this.handleNewPlaylist(playlist.id)}
                             >
                                 {playlist.name}
@@ -203,7 +211,7 @@ class LoggedIn extends Component {
             <div className={classes.App}>
                 <CssBaseline />
 
-                <AppBar position="static" style={{ marginBottom: 30 }}>
+                <AppBar position="static" style={{ marginBottom: 30, backgroundColor: 'black' }}>
                     <Toolbar>
                         <Typography variant="h6" color="inherit">
                             {currentTrackName || 'Not playing anything'}
@@ -259,26 +267,26 @@ class LoggedIn extends Component {
                             <Card>
                                 <CardActionArea>
                                     <CardMedia className={classes.CardMedia} image={imageUrl} title={name} />
-                                    <CardContent>
-                                        <Typography gutterBottom variant="h5" component="h2">
-                                            {name}
-                                        </Typography>
-                                        <Typography component="p">Followers: {numFollowers}</Typography>
-                                    </CardContent>
                                 </CardActionArea>
                                 <CardActions>
-                                    <Button
+                                    {/* <Button
                                         size="small"
                                         color="primary"
                                         onClick={this.handlePlayTopTracks}
                                     >
-                                        Play Top Tracks</Button>
+                                        Play Top Tracks</Button> */}
                                     <Button
                                         size="small"
                                         color="primary"
-                                        onClick={this.handleUserPlaylists}
+                                        onClick={() => this.handlepickedPlaylist('blm')}
                                     >
-                                        {!this.state.isPlayListOpen ? "Show Playlists" : "Hide Playlists"} </Button>
+                                        Black Lives Matter</Button>
+                                    {/* <Button
+                                        size="small"
+                                        color="primary"
+                                        onClick={() => this.handlepickedPlaylist('me')}
+                                    > */}
+                                        {/* {!this.state.isPlayListOpen ? "Show Playlists" : "Hide Playlists"} </Button> */}
                                 </CardActions>
                             </Card>
                         </div>
@@ -290,9 +298,9 @@ class LoggedIn extends Component {
                         <div className={classes.allAlbums}>
                             {albumArtCover}
                         </div>
-                        <div className={classes.trackContainer}>
+                        {/* <div className={classes.trackContainer}>
                             {pickPlaylist}
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

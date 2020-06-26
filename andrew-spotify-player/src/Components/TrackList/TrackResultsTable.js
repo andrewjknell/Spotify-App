@@ -16,17 +16,16 @@ import { TableContainer } from '@material-ui/core';
 
 
 class TrackResultsTable extends Component {
-
     render() {
         return (
             <TableContainer component={Paper}>
-                <Table padding="none">
+                <Table padding="none" size="small">
                     <TableHead>
                         <TableRow >
                             <TableCell align="left" className={classes.tableHeaders}></TableCell>
                             <TableCell align="left" className={classes.tableHeaders}>Song</TableCell>
                             <TableCell align="left" className={classes.tableHeaders}>Artist</TableCell>
-                            <TableCell align="left" className={classes.tableHeaders}>Artist</TableCell>
+                            {/* <TableCell align="left" className={classes.tableHeaders}>Artist</TableCell> */}
                         </TableRow>
                     </TableHead>
                     <TableBody >
@@ -34,7 +33,7 @@ class TrackResultsTable extends Component {
                             return (
                                 <TableRow key={song.name} hover>
                                     <TableCell align='center' ><button onClick={() => this.props.clicked(song)}><PlayCircleFilledIcon /></button></TableCell>
-                                    <TableCell className={classes.tableImg}><img src={song.album.images[0].url} alt='album' /></TableCell>
+                                    {/* <TableCell className={classes.tableImg}><img src={song.album.images[0].url} alt='album' /></TableCell> */}
                                     <TableCell>{song.name}</TableCell>
                                     <TableCell>{song.artists[0].name}</TableCell>
                                 </TableRow>

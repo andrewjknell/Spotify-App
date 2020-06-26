@@ -1,4 +1,4 @@
 {
   "client_id": "e4ae7d9d7b4a4ed8814195803eb430a6",
-  "scope": "streaming user-modify-playback-state user-read-email playlist-read-private user-read-private user-top-read user-read-recently-played playlist-read-collaborative"
+  "scope": "streaming user-modify-playback-state user-read-email playlist-read-private user-read-private user-top-read user-read-recently-played playlist-read-collaborative user-read-currently-playing user-read-playback-state"
 }

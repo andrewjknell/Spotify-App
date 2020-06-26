@@ -3,7 +3,6 @@
   margin: 0 20px;
 }
 
-
 .playLists {
   margin: 20px;
   width: 350px;
@@ -32,10 +31,12 @@
 }
 
 .playLists button {
+  padding: 0;
   text-align: left;
   display: flex;
   flex-direction: column;
   border-bottom: 1px solid black;
   border-radius: 0;
   margin-bottom: 10px;
+  font-size: .9em;
 }
