@@ -20,6 +20,7 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
 import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 import AlbumArt from '../Playlists/AlbumArt/AlbumArt';
+import { Input } from '@material-ui/core';
 
 class LoggedIn extends Component {
     state = {
@@ -33,6 +34,8 @@ class LoggedIn extends Component {
         pickedPlaylist: null,
         isPlayListOpen: false,
         albumArt: null,
+        search: '',
+        searchPlaylist: null,
     };
 
     async componentDidMount() {
@@ -70,8 +73,8 @@ class LoggedIn extends Component {
         this.state.player.setVolume(vol / 100).then(() => { });
     }
 
-    searchPlaylists = async () => {
-        const { playlists } = await spfetch("/v1/browse/categories/blackhistorymonth/playlists");
+    toggleShuffle = () => {
+        const item = spfetch('/v1/me/player/shuffle');
     }
 
     handlepickedPlaylist = async (playlist) => {
@@ -81,7 +84,7 @@ class LoggedIn extends Component {
         }
 
         if (playlist === 'blm') {
-            const { playlists } = await spfetch("/v1/search?q=%22black%20lives%20matter&type=playlist&market=US&limit=15");
+            const { playlists } = await spfetch("/v1/search?q=%22black%20lives%20lives%22matter&type=playlist&market=US&limit=15");
             const newItems = playlists.items.map(res => {
                 return res
             });
@@ -128,15 +131,28 @@ class LoggedIn extends Component {
             })
     }
 
+    inputChangeHandler = (event) => {
+        console.log(event.target.value)
+        this.setState({ search: event.target.value })
+    }
+
+    handleSearchPlaylist = async () => {
+        const newArr = this.state.search.split(" ")
+        console.log(newArr)
+
+        const { playlists } = await spfetch("/v1/search?q=%20beach&type=playlist&limit=15");
+        const newItems = playlists.items.map(res => {
+            return res
+        });
+        this.setState({ searchPlaylist: newItems })
+        console.log(this.state.searchPlaylist, 'search')
+    }
+
     handleSongSelect = (song) => {
         const newSong = []
         newSong.push(song)
         this.state.player.play(newSong.map(({ uri }) => uri));
         this.setState({ imageUrl: song.album.images[0].url });
-    }
-
-    toggleShuffle = (shuff) => {
-
     }
 
     handlePlayPreviousTrack = () => this.state.player.previousTrack();
@@ -157,7 +173,7 @@ class LoggedIn extends Component {
             playerState: {
                 paused = true,
                 context,
-                track_window: { 
+                track_window: {
                     current_track: { name: currentTrackName } = {} } = {},
                 restrictions: {
                     disallow_pausing_reasons: [pauseRestrictedReason] = [],
@@ -177,7 +193,7 @@ class LoggedIn extends Component {
                     // console.log(playlist)
                     return (
                         <div key={playlist.id} className={classes.listPlay}>
-                            {/* <button onClick={() => this.handleSelectedPlaylist(playlist.id)}>play</button> */}
+                            <button onClick={() => this.handleSelectedPlaylist(playlist.id)}>play</button>
                             <Button
                                 className={classes.buttonPlaylist}
                                 onClick={() => this.handleNewPlaylist(playlist.id)}
@@ -269,24 +285,24 @@ class LoggedIn extends Component {
                                     <CardMedia className={classes.CardMedia} image={imageUrl} title={name} />
                                 </CardActionArea>
                                 <CardActions>
-                                    {/* <Button
+                                    <Button
                                         size="small"
                                         color="primary"
-                                        onClick={this.handlePlayTopTracks}
+                                        onClick={this.toggleShuffle}
                                     >
-                                        Play Top Tracks</Button> */}
+                                        Play Top Tracks</Button>
                                     <Button
                                         size="small"
                                         color="primary"
                                         onClick={() => this.handlepickedPlaylist('blm')}
                                     >
                                         Black Lives Matter</Button>
-                                    {/* <Button
+                                    <Button
                                         size="small"
                                         color="primary"
                                         onClick={() => this.handlepickedPlaylist('me')}
-                                    > */}
-                                        {/* {!this.state.isPlayListOpen ? "Show Playlists" : "Hide Playlists"} </Button> */}
+                                    >
+                                        {!this.state.isPlayListOpen ? "Show Playlists" : "Hide Playlists"} </Button>
                                 </CardActions>
                             </Card>
                         </div>
@@ -296,7 +312,16 @@ class LoggedIn extends Component {
                     </div>
                     <div>
                         <div className={classes.allAlbums}>
-                            {albumArtCover}
+                            <div>
+                                <form onSubmit={this.handleSearchPlaylist}>
+                                    <Input
+                                        type="text"
+                                        onChange={(event) => this.inputChangeHandler(event)}
+                                    />
+                                    <button type='submit'>pick</button>
+                                </form>
+                                {albumArtCover}
+                            </div>
                         </div>
                         {/* <div className={classes.trackContainer}>
                             {pickPlaylist}
