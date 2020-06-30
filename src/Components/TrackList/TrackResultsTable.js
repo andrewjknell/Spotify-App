@@ -33,7 +33,6 @@ class TrackResultsTable extends Component {
                             return (
                                 <TableRow key={song.name} hover>
                                     <TableCell align='center' ><button onClick={() => this.props.clicked(song)}><PlayCircleFilledIcon /></button></TableCell>
-                                    {/* <TableCell className={classes.tableImg}><img src={song.album.images[0].url} alt='album' /></TableCell> */}
                                     <TableCell>{song.name}</TableCell>
                                     <TableCell>{song.artists[0].name}</TableCell>
                                 </TableRow>

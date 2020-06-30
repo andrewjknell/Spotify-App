@@ -3,14 +3,12 @@ import fetchPlayer from '../../fetchPlayer';
 import spfetch from '../../spfetch';
 
 import classes from './LoggedIn.module.css'
-import TrackResultsTable from '../TrackList/TrackResultsTable';
-
+// import TrackResultsTable from '../TrackList/TrackResultsTable';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
-import CardMedia from '@material-ui/core/CardMedia';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import IconButton from '@material-ui/core/IconButton';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -20,7 +18,7 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
 import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 import AlbumArt from '../Playlists/AlbumArt/AlbumArt';
-import { Input } from '@material-ui/core';
+// import { Input } from '@material-ui/core';
 
 class LoggedIn extends Component {
     state = {
@@ -31,6 +29,7 @@ class LoggedIn extends Component {
         playerState: {},
         albumImg: null,
         playlist: null,
+        playlistName: null,
         pickedPlaylist: null,
         isPlayListOpen: false,
         albumArt: null,
@@ -74,7 +73,7 @@ class LoggedIn extends Component {
     }
 
     toggleShuffle = () => {
-        const item = spfetch('/v1/me/player/shuffle');
+        console.log(this.state.playlist)
     }
 
     handlepickedPlaylist = async (playlist) => {
@@ -84,7 +83,7 @@ class LoggedIn extends Component {
         }
 
         if (playlist === 'blm') {
-            const { playlists } = await spfetch("/v1/search?q=%22black%20lives%20lives%22matter&type=playlist&market=US&limit=15");
+            const { playlists } = await spfetch("/v1/search?q=%22black%20lives%22matter&type=playlist&market=US&limit=15");
             const newItems = playlists.items.map(res => {
                 return res
             });
@@ -109,8 +108,9 @@ class LoggedIn extends Component {
         this.state.player.play(items.map(({ uri }) => uri));
     };
 
-    handleNewPlaylist = async (id) => {
+    handleNewPlaylist = async (id, name) => {
         const { items } = await spfetch('/v1/playlists/' + id + '/tracks');
+        this.setState({ playlistName: name });
         const newItems = items.map(song => {
             return song.track
         })
@@ -118,7 +118,8 @@ class LoggedIn extends Component {
         // this.state.player.play(newItems.map(({ uri }) => uri));
     }
 
-    handleSelectedPlaylist = async (id) => {
+    handleSelectedPlaylist = async (id, name) => {
+        this.setState({ playlistName: name });
         const { items } = await spfetch('/v1/playlists/' + id + '/tracks');
         const newItems = items.map(song => {
             return song.track
@@ -132,14 +133,13 @@ class LoggedIn extends Component {
     }
 
     inputChangeHandler = (event) => {
-        console.log(event.target.value)
+        // console.log(event.target.value)
         this.setState({ search: event.target.value })
     }
 
     handleSearchPlaylist = async () => {
-        const newArr = this.state.search.split(" ")
-        console.log(newArr)
-
+        // const newArr = this.state.search.split(" ")
+        // console.log(newArr)
         const { playlists } = await spfetch("/v1/search?q=%20beach&type=playlist&limit=15");
         const newItems = playlists.items.map(res => {
             return res
@@ -167,7 +167,6 @@ class LoggedIn extends Component {
 
     render() {
         const {
-            name,
             imageUrl,
             player,
             playerState: {
@@ -193,10 +192,10 @@ class LoggedIn extends Component {
                     // console.log(playlist)
                     return (
                         <div key={playlist.id} className={classes.listPlay}>
-                            <button onClick={() => this.handleSelectedPlaylist(playlist.id)}>play</button>
+                            <button onClick={() => this.handleSelectedPlaylist(playlist.id, playlist.name)}>play</button>
                             <Button
                                 className={classes.buttonPlaylist}
-                                onClick={() => this.handleNewPlaylist(playlist.id)}
+                                onClick={() => this.handleNewPlaylist(playlist.id, playlist.name)}
                             >
                                 {playlist.name}
                             </Button>
@@ -206,15 +205,15 @@ class LoggedIn extends Component {
             )
         }
 
-        let pickPlaylist;
+        // let pickPlaylist;
         let albumArtCover;
         if (this.state.playlist) {
-            pickPlaylist = (
-                <TrackResultsTable
-                    playlist={this.state.playlist}
-                    clicked={(song) => this.handleSongSelect(song)}
-                />
-            );
+            // pickPlaylist = (
+            //     <TrackResultsTable
+            //         playlist={this.state.playlist}
+            //         clicked={(song) => this.handleSongSelect(song)}
+            //     />
+            // );
             albumArtCover = (
                 <AlbumArt
                     covers={this.state.playlist}
@@ -227,10 +226,10 @@ class LoggedIn extends Component {
             <div className={classes.App}>
                 <CssBaseline />
 
-                <AppBar position="static" style={{ marginBottom: 30, backgroundColor: 'black' }}>
+                <AppBar position="static" style={{ marginBottom: 20, backgroundColor: 'black' }}>
                     <Toolbar>
                         <Typography variant="h6" color="inherit">
-                            {currentTrackName || 'Not playing anything'}
+                            {currentTrackName || null}
                         </Typography>
                         <div className={classes.grow} />
                         <input
@@ -282,7 +281,9 @@ class LoggedIn extends Component {
                         <div className={classes.Card}>
                             <Card>
                                 <CardActionArea>
-                                    <CardMedia className={classes.CardMedia} image={imageUrl} title={name} />
+                                    <div className={classes.CardMedia}>
+                                        <img alt='album cover' src={imageUrl} />
+                                    </div>
                                 </CardActionArea>
                                 <CardActions>
                                     <Button
@@ -313,19 +314,17 @@ class LoggedIn extends Component {
                     <div>
                         <div className={classes.allAlbums}>
                             <div>
-                                <form onSubmit={this.handleSearchPlaylist}>
+                                {/* <form onSubmit={this.handleSearchPlaylist}>
                                     <Input
                                         type="text"
                                         onChange={(event) => this.inputChangeHandler(event)}
                                     />
                                     <button type='submit'>pick</button>
-                                </form>
+                                </form> */}
+                                {this.state.playlistName ? <div className={classes.text}>{this.state.playlistName}</div> : null}
                                 {albumArtCover}
                             </div>
                         </div>
-                        {/* <div className={classes.trackContainer}>
-                            {pickPlaylist}
-                        </div> */}
                     </div>
                 </div>
             </div>

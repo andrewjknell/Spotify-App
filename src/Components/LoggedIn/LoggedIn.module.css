@@ -1,29 +1,24 @@
 .Card {
   width: 300px;
-  margin: 0 20px;
+  margin: 37px 0 20px 40px;
 }
 
 .playLists {
-  margin: 20px;
-  width: 350px;
+  margin: 20px 20px 20px 40px;
+  width: 300px;
 }
 
 .body {
   display: flex;
 }
 
-/* .sideCard {
-  
-} */
-
-.trackContainer {
-  margin-top: 50;
-  width: 80%;
-}
-
 .CardMedia {
   width: 300px;
   height: 300px;
+}
+
+.CardMedia img {
+  height: 100%;
 }
 
 .grow {
@@ -39,4 +34,13 @@
   border-radius: 0;
   margin-bottom: 10px;
   font-size: .9em;
+}
+
+.text {
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.allAlbums {
+  margin: 0 0 0 40px;
 }
