@@ -1,6 +1,6 @@
 {
   "type": "static",
-  "alias": "spotify-react-app-template.now.sh",
+  "alias": "andrew-spotify-app.now.sh",
   "static": {
     "rewrites": [
       {

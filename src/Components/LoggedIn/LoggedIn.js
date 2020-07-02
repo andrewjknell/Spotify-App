@@ -73,7 +73,7 @@ class LoggedIn extends Component {
     }
 
     toggleShuffle = () => {
-        console.log(this.state.playlist)
+        console.log(this.state.player)
     }
 
     handlepickedPlaylist = async (playlist) => {
@@ -208,12 +208,6 @@ class LoggedIn extends Component {
         // let pickPlaylist;
         let albumArtCover;
         if (this.state.playlist) {
-            // pickPlaylist = (
-            //     <TrackResultsTable
-            //         playlist={this.state.playlist}
-            //         clicked={(song) => this.handleSongSelect(song)}
-            //     />
-            // );
             albumArtCover = (
                 <AlbumArt
                     covers={this.state.playlist}
@@ -297,13 +291,13 @@ class LoggedIn extends Component {
                                         color="primary"
                                         onClick={() => this.handlepickedPlaylist('blm')}
                                     >
-                                        Black Lives Matter</Button>
+                                        BLM</Button>
                                     <Button
                                         size="small"
                                         color="primary"
                                         onClick={() => this.handlepickedPlaylist('me')}
                                     >
-                                        {!this.state.isPlayListOpen ? "Show Playlists" : "Hide Playlists"} </Button>
+                                        {!this.state.isPlayListOpen ? "My Playlists" : "Hide Playlists"} </Button>
                                 </CardActions>
                             </Card>
                         </div>

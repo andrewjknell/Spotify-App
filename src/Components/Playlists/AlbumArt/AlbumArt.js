@@ -10,12 +10,12 @@ const albumArt = (props) => (
                 <div
                     className={classes.container}
                     onClick={() => props.clicked(song)}
+                    key={song.uri}
                 >
                     <img
                         // className={classes.images}
                         src={song.album.images[0].url}
                         alt='album'
-                        key={song.uri}
                     />
                     <div className={classes.middle}>
                         <div className={classes.text}>
