@@ -23,8 +23,6 @@ import AlbumArt from '../Playlists/AlbumArt/AlbumArt';
 class LoggedIn extends Component {
     state = {
         id: null,
-        href: null,
-        imageUrl: null,
         player: null,
         playerState: {},
         albumImg: null,
@@ -57,13 +55,9 @@ class LoggedIn extends Component {
 
     async getMe() {
         const {
-            id,
-            display_name: name,
-            href,
-            images: [{ url: imageUrl } = {}] = [],
-            followers: { total: numFollowers }
+            id
         } = await spfetch('/v1/me');
-        this.setState({ id, name, href, imageUrl, numFollowers });
+        this.setState({ id });
         return true;
     }
 
@@ -73,7 +67,7 @@ class LoggedIn extends Component {
     }
 
     toggleShuffle = () => {
-        console.log(this.state.player)
+        console.log(this.state.playerState)
     }
 
     handlepickedPlaylist = async (playlist) => {
@@ -127,9 +121,7 @@ class LoggedIn extends Component {
         this.setState({ playlist: newItems })
         this.state.player.play(newItems.map(({ uri }) => uri));
         this.state.player.getCurrentState()
-            .then(res => {
-                console.log(res)
-            })
+            .then(res => {})
     }
 
     inputChangeHandler = (event) => {
@@ -167,13 +159,14 @@ class LoggedIn extends Component {
 
     render() {
         const {
-            imageUrl,
             player,
             playerState: {
                 paused = true,
                 context,
                 track_window: {
-                    current_track: { name: currentTrackName } = {} } = {},
+                    current_track: { name: currentTrackName,
+                     } = {}
+                } = {},
                 restrictions: {
                     disallow_pausing_reasons: [pauseRestrictedReason] = [],
                     disallow_skipping_prev_reasons: [skipPreviousRestrictedReason] = [],
@@ -181,6 +174,11 @@ class LoggedIn extends Component {
                 } = {}
             }
         } = this.state;
+        let albumCover = this.state.playerState.track_window
+        if(typeof albumCover !== "undefined"){
+            albumCover = this.state.playerState.track_window.current_track.album.images[0].url;
+        }
+        
 
         const hasPlayer = !!player;
         const hasContext = context;
@@ -222,6 +220,7 @@ class LoggedIn extends Component {
 
                 <AppBar position="static" style={{ marginBottom: 20, backgroundColor: 'black' }}>
                     <Toolbar>
+                        {/* <div>{currentAlbum ? currentAlbum.images[0] : null}</div> */}
                         <Typography variant="h6" color="inherit">
                             {currentTrackName || null}
                         </Typography>
@@ -276,7 +275,7 @@ class LoggedIn extends Component {
                             <Card>
                                 <CardActionArea>
                                     <div className={classes.CardMedia}>
-                                        <img alt='album cover' src={imageUrl} />
+                                        <img alt='album cover' src={albumCover ? albumCover : "https://www.vidyard.com/media/background-music-for-video-1920x1080.jpg"} />
                                     </div>
                                 </CardActionArea>
                                 <CardActions>
