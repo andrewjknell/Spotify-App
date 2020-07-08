@@ -1,0 +1,25 @@
+.playButton {
+    /* width: 20%; */
+    display: inline-block;
+    border-radius: 5px;
+    margin-right: 2px;
+}
+.buttonPlaylist {
+    height: 100%;
+    /* width: 100%; */
+ /* overflow: hidden; */
+}
+.container {
+    padding: 3px 0;
+    border: .5px black solid;
+}
+.playButton:hover {
+    cursor: pointer;
+    background-color: antiquewhite;
+
+}
+
+.buttonPlaylist:hover {
+    cursor: pointer;
+    background-color: antiquewhite;
+}

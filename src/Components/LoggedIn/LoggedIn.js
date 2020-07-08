@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import fetchPlayer from '../../fetchPlayer';
 import spfetch from '../../spfetch';
+import PlaylistSelection from '../Playlists/PlaylistSelection/PlaylistSelection';
+import classes from './LoggedIn.module.css';
 
-import classes from './LoggedIn.module.css'
 // import TrackResultsTable from '../TrackList/TrackResultsTable';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
@@ -121,7 +122,7 @@ class LoggedIn extends Component {
         this.setState({ playlist: newItems })
         this.state.player.play(newItems.map(({ uri }) => uri));
         this.state.player.getCurrentState()
-            .then(res => {})
+            .then(res => { })
     }
 
     inputChangeHandler = (event) => {
@@ -165,7 +166,7 @@ class LoggedIn extends Component {
                 context,
                 track_window: {
                     current_track: { name: currentTrackName,
-                     } = {}
+                    } = {}
                 } = {},
                 restrictions: {
                     disallow_pausing_reasons: [pauseRestrictedReason] = [],
@@ -175,31 +176,23 @@ class LoggedIn extends Component {
             }
         } = this.state;
         let albumCover = this.state.playerState.track_window
-        if(typeof albumCover !== "undefined"){
+        if (typeof albumCover !== "undefined") {
             albumCover = this.state.playerState.track_window.current_track.album.images[0].url;
         }
-        
+
 
         const hasPlayer = !!player;
         const hasContext = context;
 
         let playListPickFrom;
         if (this.state.isPlayListOpen) {
+            console.log('here')
             playListPickFrom = (
-                this.state.pickedPlaylist.map(playlist => {
-                    // console.log(playlist)
-                    return (
-                        <div key={playlist.id} className={classes.listPlay}>
-                            <button onClick={() => this.handleSelectedPlaylist(playlist.id, playlist.name)}>play</button>
-                            <Button
-                                className={classes.buttonPlaylist}
-                                onClick={() => this.handleNewPlaylist(playlist.id, playlist.name)}
-                            >
-                                {playlist.name}
-                            </Button>
-                        </div>
-                    )
-                })
+                <PlaylistSelection
+                    playlists={this.state.pickedPlaylist}
+                    handleSelectedPlaylist={(id, name) => this.handleSelectedPlaylist(id, name)}
+                    handleNewPlaylist={(id, name) => this.handleNewPlaylist(id, name)}
+                />
             )
         }
 

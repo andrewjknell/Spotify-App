@@ -5,7 +5,7 @@
 
 .playLists {
   margin: 20px 20px 20px 40px;
-  width: 300px;
+  width: 400px;
 }
 
 .body {
@@ -25,17 +25,6 @@
   flex-grow: 1;
 }
 
-.playLists button {
-  padding: 0;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  border-bottom: 1px solid black;
-  border-radius: 0;
-  margin-bottom: 10px;
-  font-size: .9em;
-}
-
 .text {
   font-size: 26px;
   font-weight: bold;
@@ -44,3 +33,4 @@
 .allAlbums {
   margin: 0 0 0 40px;
 }
+
