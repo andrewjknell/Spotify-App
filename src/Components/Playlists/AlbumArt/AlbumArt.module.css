@@ -4,6 +4,11 @@
     cursor: pointer;
     
 }
+.playButton {
+    display: block;
+    cursor: pointer;
+    width: 20%;
+}
 
 .albumArtCover img {
     height: 130px;

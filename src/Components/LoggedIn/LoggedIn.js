@@ -34,6 +34,11 @@ class LoggedIn extends Component {
         albumArt: null,
         search: '',
         searchPlaylist: null,
+        playlistViewed: {
+            id: null,
+            name: null,
+        }
+
     };
 
     async componentDidMount() {
@@ -103,8 +108,14 @@ class LoggedIn extends Component {
         this.state.player.play(items.map(({ uri }) => uri));
     };
 
-    handleNewPlaylist = async (id, name) => {
+    handlePickedPlaylistAlbumArt = async (id, name) => {
         const { items } = await spfetch('/v1/playlists/' + id + '/tracks');
+        this.setState({
+            playlistViewed: {
+                id: id,
+                name: name,
+            }
+        })
         this.setState({ playlistName: name });
         const newItems = items.map(song => {
             return song.track
@@ -113,9 +124,9 @@ class LoggedIn extends Component {
         // this.state.player.play(newItems.map(({ uri }) => uri));
     }
 
-    handleSelectedPlaylist = async (id, name) => {
-        this.setState({ playlistName: name });
-        const { items } = await spfetch('/v1/playlists/' + id + '/tracks');
+    playSelectedPlaylist = async () => {
+        this.setState({ playlistName: this.state.playlistViewed.name });
+        const { items } = await spfetch('/v1/playlists/' + this.state.playlistViewed.id + '/tracks');
         const newItems = items.map(song => {
             return song.track
         })
@@ -190,8 +201,7 @@ class LoggedIn extends Component {
             playListPickFrom = (
                 <PlaylistSelection
                     playlists={this.state.pickedPlaylist}
-                    handleSelectedPlaylist={(id, name) => this.handleSelectedPlaylist(id, name)}
-                    handleNewPlaylist={(id, name) => this.handleNewPlaylist(id, name)}
+                    handlePickedPlaylistAlbumArt={(id, name) => this.handlePickedPlaylistAlbumArt(id, name)}
                 />
             )
         }
@@ -203,6 +213,7 @@ class LoggedIn extends Component {
                 <AlbumArt
                     covers={this.state.playlist}
                     clicked={(song) => this.handleSongSelect(song)}
+                    playSelectedPlaylist={this.playSelectedPlaylist}
                 />
             )
         }
@@ -307,7 +318,11 @@ class LoggedIn extends Component {
                                     />
                                     <button type='submit'>pick</button>
                                 </form> */}
-                                {this.state.playlistName ? <div className={classes.text}>{this.state.playlistName}</div> : null}
+
+                                {this.state.playlistName ? (
+                                    <div className={classes.text}>
+                                        {this.state.playlistName}
+                                    </div>) : null}
                                 {albumArtCover}
                             </div>
                         </div>
