@@ -2,14 +2,18 @@
     position: relative;
     display: inline-block;
     cursor: pointer;
-    
 }
 .playButton {
     display: block;
     cursor: pointer;
-    width: 20%;
+    /* width: 20%; */
 }
-
+.awesomeButt{
+    font-size: 40px;
+    display: block;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
 .albumArtCover img {
     height: 130px;
     display: inline-block;

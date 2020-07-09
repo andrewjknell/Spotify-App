@@ -2,7 +2,10 @@
     display: block;
     font-size: 16px;
     color: rgb(109, 109, 109);
-    margin-bottom: 1px;
+    margin-bottom: 5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .buttonPlaylist:hover {

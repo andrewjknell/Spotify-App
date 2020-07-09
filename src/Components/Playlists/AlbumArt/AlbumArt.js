@@ -1,20 +1,19 @@
 import React from 'react'
 import classes from './AlbumArt.module.css';
-import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
-
+import { faPlayCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
 const albumArt = (props) => (
     <div className={classes.albumArtCover}>
-        <div className={classes.playButton}>
-            <PlayCircleFilledIcon
-                onClick={props.playSelectedPlaylist} style={{ marginRight: 4, fontSize: "60px" }}
-            />
-        </div>
+        <FontAwesomeIcon
+            onClick={props.playSelectedPlaylist} 
+            className={classes.awesomeButt}
+            icon={faPlayCircle}
+        />
 
         {props.covers.map(song => {
             return (
-
                 <div
                     className={classes.container}
                     onClick={() => props.clicked(song)}

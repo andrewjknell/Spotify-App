@@ -83,7 +83,7 @@ class LoggedIn extends Component {
         }
 
         if (playlist === 'blm') {
-            const { playlists } = await spfetch("/v1/search?q=%22black%20lives%22matter&type=playlist&market=US&limit=15");
+            const { playlists } = await spfetch("/v1/search?q=%22black%20lives%22matter&type=playlist&market=US&limit=20");
             const newItems = playlists.items.map(res => {
                 return res
             });
@@ -283,24 +283,24 @@ class LoggedIn extends Component {
                                     </div>
                                 </CardActionArea>
                                 <CardActions>
-                                    <Button
+                                    {/* <Button
                                         size="small"
                                         color="primary"
                                         onClick={this.toggleShuffle}
                                     >
-                                        Play Top Tracks</Button>
+                                        Play Top Tracks</Button> */}
                                     <Button
                                         size="small"
                                         color="primary"
                                         onClick={() => this.handlepickedPlaylist('blm')}
                                     >
                                         BLM</Button>
-                                    <Button
+                                    {/* <Button
                                         size="small"
                                         color="primary"
                                         onClick={() => this.handlepickedPlaylist('me')}
                                     >
-                                        {!this.state.isPlayListOpen ? "My Playlists" : "Hide Playlists"} </Button>
+                                        {!this.state.isPlayListOpen ? "My Playlists" : "Hide Playlists"} </Button> */}
                                 </CardActions>
                             </Card>
                         </div>
