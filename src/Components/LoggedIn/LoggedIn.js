@@ -5,6 +5,8 @@ import PlaylistSelection from '../Playlists/PlaylistSelection/PlaylistSelection'
 import classes from './LoggedIn.module.css';
 
 // import TrackResultsTable from '../TrackList/TrackResultsTable';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRandom } from "@fortawesome/free-solid-svg-icons";
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -32,13 +34,13 @@ class LoggedIn extends Component {
         pickedPlaylist: null,
         isPlayListOpen: false,
         albumArt: null,
-        search: '',
-        searchPlaylist: null,
+        // search: '',
+        // searchPlaylist: null,
         playlistViewed: {
             id: null,
             name: null,
-        }
-
+        },
+        shuffle: false,
     };
 
     async componentDidMount() {
@@ -47,7 +49,6 @@ class LoggedIn extends Component {
     }
 
     async initPlayer() {
-        // Let's fetch a connected player instance and also add it to `window` for debugging purposes
         const player = (global.player = await fetchPlayer());
         this.setState({ player });
         player.addListener('player_state_changed', playerState =>
@@ -72,8 +73,11 @@ class LoggedIn extends Component {
         this.state.player.setVolume(vol / 100).then(() => { });
     }
 
-    toggleShuffle = () => {
-        console.log(this.state.playerState)
+    toggleShuffle = async () => {
+        if (this.state.playerState.track_window) {
+            await spfetch("https://api.spotify.com/v1/me/player/shuffle?state=" + !this.state.shuffle, { method: "PUT" });
+            this.setState({ shuffle: !this.state.shuffle })
+        }
     }
 
     handlepickedPlaylist = async (playlist) => {
@@ -197,7 +201,6 @@ class LoggedIn extends Component {
 
         let playListPickFrom;
         if (this.state.isPlayListOpen) {
-            console.log('here')
             playListPickFrom = (
                 <PlaylistSelection
                     playlists={this.state.pickedPlaylist}
@@ -229,6 +232,18 @@ class LoggedIn extends Component {
                             {currentTrackName || null}
                         </Typography>
                         <div className={classes.grow} />
+                        {!this.state.shuffle ? (
+                            <FontAwesomeIcon
+                                onClick={this.toggleShuffle}
+                                className={classes.awesomeButt}
+                                icon={faRandom}
+                            />
+                        ) : <FontAwesomeIcon
+                                onClick={this.toggleShuffle}
+                                className={classes.awesomeButt2}
+                                icon={faRandom}
+                            />}
+
                         <input
                             type="range"
                             min="1"
@@ -283,24 +298,18 @@ class LoggedIn extends Component {
                                     </div>
                                 </CardActionArea>
                                 <CardActions>
-                                    {/* <Button
-                                        size="small"
-                                        color="primary"
-                                        onClick={this.toggleShuffle}
-                                    >
-                                        Play Top Tracks</Button> */}
                                     <Button
                                         size="small"
                                         color="primary"
                                         onClick={() => this.handlepickedPlaylist('blm')}
                                     >
                                         BLM</Button>
-                                    {/* <Button
+                                    <Button
                                         size="small"
                                         color="primary"
                                         onClick={() => this.handlepickedPlaylist('me')}
                                     >
-                                        {!this.state.isPlayListOpen ? "My Playlists" : "Hide Playlists"} </Button> */}
+                                        Saved Playlists</Button>
                                 </CardActions>
                             </Card>
                         </div>
@@ -318,11 +327,6 @@ class LoggedIn extends Component {
                                     />
                                     <button type='submit'>pick</button>
                                 </form> */}
-
-                                {this.state.playlistName ? (
-                                    <div className={classes.text}>
-                                        {this.state.playlistName}
-                                    </div>) : null}
                                 {albumArtCover}
                             </div>
                         </div>

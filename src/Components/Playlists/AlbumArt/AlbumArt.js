@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const albumArt = (props) => (
     <div className={classes.albumArtCover}>
         <FontAwesomeIcon
-            onClick={props.playSelectedPlaylist} 
+            onClick={props.playSelectedPlaylist}
             className={classes.awesomeButt}
             icon={faPlayCircle}
         />

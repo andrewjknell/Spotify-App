@@ -8,6 +8,19 @@
   width: 280px;
 }
 
+.awesomeButt{
+  font-size: 20px;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+.awesomeButt2{
+  color: blue;
+  font-size: 20px;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
 .body {
   display: flex;
 }
