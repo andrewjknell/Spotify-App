@@ -237,11 +237,14 @@ class LoggedIn extends Component {
                                 onClick={this.toggleShuffle}
                                 className={classes.awesomeButt}
                                 icon={faRandom}
+                                title='shuffle'
                             />
                         ) : <FontAwesomeIcon
                                 onClick={this.toggleShuffle}
                                 className={classes.awesomeButt2}
                                 icon={faRandom}
+                                title='shuffle'
+
                             />}
 
                         <input

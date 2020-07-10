@@ -3,7 +3,6 @@ import classes from './AlbumArt.module.css';
 import { faPlayCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-
 const albumArt = (props) => (
     <div className={classes.albumArtCover}>
         <FontAwesomeIcon
