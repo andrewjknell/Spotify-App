@@ -10,7 +10,7 @@
 }
 
 .awesomeButt{
-    font-size: 40px;
+    font-size: 30px;
     display: block;
     cursor: pointer;
     margin-bottom: 10px;
@@ -24,11 +24,6 @@
     background-color: black;
     backface-visibility: hidden;
 }
-
-/* .albumArtCover img:hover {
-    padding: 8px;
-    cursor: pointer;
-} */
 
 .albumArtCover {
     width: 100%;

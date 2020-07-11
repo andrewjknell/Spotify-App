@@ -4,7 +4,7 @@ import spfetch from '../../spfetch';
 import PlaylistSelection from '../Playlists/PlaylistSelection/PlaylistSelection';
 import classes from './LoggedIn.module.css';
 
-// import TrackResultsTable from '../TrackList/TrackResultsTable';
+import { shuffle } from '../../utils/miscFunctions';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRandom } from "@fortawesome/free-solid-svg-icons";
 import AppBar from '@material-ui/core/AppBar';
@@ -113,23 +113,21 @@ class LoggedIn extends Component {
     };
 
     handlePickedPlaylistAlbumArt = async (id, name) => {
-        const { items } = await spfetch('/v1/playlists/' + id + '/tracks');
+        const playlist = await spfetch('/v1/playlists/' + id);
         this.setState({
             playlistViewed: {
                 id: id,
                 name: name,
             }
         })
-        this.setState({ playlistName: name });
-        const newItems = items.map(song => {
-            return song.track
-        })
-        this.setState({ playlist: newItems })
+        // const newItems = playlist.tracks.items.map(song => {
+        //     return song.track
+        // })
+        this.setState({ playlist: playlist })
         // this.state.player.play(newItems.map(({ uri }) => uri));
     }
 
     playSelectedPlaylist = async () => {
-        this.setState({ playlistName: this.state.playlistViewed.name });
         const { items } = await spfetch('/v1/playlists/' + this.state.playlistViewed.id + '/tracks');
         const newItems = items.map(song => {
             return song.track
@@ -145,22 +143,33 @@ class LoggedIn extends Component {
         this.setState({ search: event.target.value })
     }
 
-    handleSearchPlaylist = async () => {
-        // const newArr = this.state.search.split(" ")
-        // console.log(newArr)
-        const { playlists } = await spfetch("/v1/search?q=%20beach&type=playlist&limit=15");
-        const newItems = playlists.items.map(res => {
-            return res
-        });
-        this.setState({ searchPlaylist: newItems })
-        console.log(this.state.searchPlaylist, 'search')
-    }
+    // handleSearchPlaylist = async () => {
+    //     // const newArr = this.state.search.split(" ")
+    //     // console.log(newArr)
+    //     const { playlists } = await spfetch("/v1/search?q=%20beach&type=playlist&limit=15");
+    //     const newItems = playlists.items.map(res => {
+    //         return res
+    //     });
+    //     this.setState({ searchPlaylist: newItems })
+    //     console.log(this.state.searchPlaylist, 'search')
+    // }
 
     handleSongSelect = (song) => {
-        const newSong = []
-        newSong.push(song)
-        this.state.player.play(newSong.map(({ uri }) => uri));
-        this.setState({ imageUrl: song.album.images[0].url });
+        console.log(this.state.playlist.tracks.items)
+        console.log(shuffle(this.state.playlist.tracks.items))
+        
+        let firstSong;
+        let shuffled = [];
+        this.state.playlist.tracks.items.map(res => {
+            if(res.track === song){
+                firstSong = res.track;
+            }
+        })
+        
+        // const newSong = []
+        // newSong.push(song)
+        // this.state.player.play(newSong.map(({ uri }) => uri));
+        // this.setState({ imageUrl: song.album.images[0].url });
     }
 
     handlePlayPreviousTrack = () => this.state.player.previousTrack();
@@ -214,7 +223,7 @@ class LoggedIn extends Component {
         if (this.state.playlist) {
             albumArtCover = (
                 <AlbumArt
-                    covers={this.state.playlist}
+                    covers={this.state.playlist.tracks.items}
                     clicked={(song) => this.handleSongSelect(song)}
                     playSelectedPlaylist={this.playSelectedPlaylist}
                 />
