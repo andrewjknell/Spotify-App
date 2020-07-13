@@ -3,16 +3,12 @@
     display: inline-block;
     cursor: pointer;
 }
-.playButton {
-    display: block;
-    cursor: pointer;
-    /* width: 20%; */
-}
 
 .awesomeButt{
     font-size: 30px;
     display: block;
     cursor: pointer;
+    color: rgb(0,117,255);
     margin-bottom: 10px;
 }
 .albumArtCover img {

@@ -10,23 +10,23 @@ const albumArt = (props) => (
             className={classes.awesomeButt}
             icon={faPlayCircle}
         />
-
+        <h3>{props.picked.name}</h3>
         {props.covers.map(song => {
             return (
                 <div
                     className={classes.container}
-                    onClick={() => props.clicked(song.track)}
-                    key={song.track.uri}
+                    onClick={() => props.clicked(song)}
+                    key={song.uri}
                 >
                     <img
                         // className={classes.images}
-                        src={song.track.album.images[0].url}
+                        src={song.album.images[0].url}
                         alt='album'
                     />
                     <div className={classes.middle}>
                         <div className={classes.text}>
-                            <p>{song.track.name}</p>
-                            <p><b>-</b> {song.track.artists[0].name}</p>
+                            <p>{song.name}</p>
+                            <p><b>-</b> {song.artists[0].name}</p>
                         </div>
                     </div>
                 </div>

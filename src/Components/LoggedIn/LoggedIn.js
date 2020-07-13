@@ -4,7 +4,6 @@ import spfetch from '../../spfetch';
 import PlaylistSelection from '../Playlists/PlaylistSelection/PlaylistSelection';
 import classes from './LoggedIn.module.css';
 
-import { shuffle } from '../../utils/miscFunctions';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRandom } from "@fortawesome/free-solid-svg-icons";
 import AppBar from '@material-ui/core/AppBar';
@@ -29,6 +28,7 @@ class LoggedIn extends Component {
         player: null,
         playerState: {},
         albumImg: null,
+        playlistTracks: null,
         playlist: null,
         playlistName: null,
         pickedPlaylist: null,
@@ -81,12 +81,16 @@ class LoggedIn extends Component {
     }
 
     handlepickedPlaylist = async (playlist) => {
-        if (this.state.isPlayListOpen) {
-            this.setState({ isPlayListOpen: false });
-            return;
-        }
+        // if (this.state.isPlayListOpen ) {
+        //     this.setState({ isPlayListOpen: false });
+        //     return;
+        // }
 
         if (playlist === 'blm') {
+            if (this.state.isPlayListOpen && !this.state.pickedPlaylist) {
+                this.setState({ isPlayListOpen: false })
+                return
+            }
             const { playlists } = await spfetch("/v1/search?q=%22black%20lives%22matter&type=playlist&market=US&limit=20");
             const newItems = playlists.items.map(res => {
                 return res
@@ -95,8 +99,24 @@ class LoggedIn extends Component {
             this.setState({ isPlayListOpen: true })
 
         } else if (playlist === 'me') {
+            if (this.state.isPlayListOpen && !this.state.pickedPlaylist) {
+                this.setState({ isPlayListOpen: false })
+                return
+            }
             const { items } = await spfetch("/v1/me/playlists");
             const newItems = items.map(res => {
+                return res
+            });
+            this.setState({ pickedPlaylist: newItems })
+            this.setState({ isPlayListOpen: true })
+
+        } else if (playlist === 'workout') {
+            if (this.state.isPlayListOpen && !this.state.pickedPlaylist) {
+                this.setState({ isPlayListOpen: false })
+                return
+            }
+            const { playlists } = await spfetch("/v1/search?q=%22workout&type=playlist&market=US&limit=20");
+            const newItems = playlists.items.map(res => {
                 return res
             });
             this.setState({ pickedPlaylist: newItems })
@@ -120,14 +140,14 @@ class LoggedIn extends Component {
                 name: name,
             }
         })
-        // const newItems = playlist.tracks.items.map(song => {
-        //     return song.track
-        // })
-        this.setState({ playlist: playlist })
-        // this.state.player.play(newItems.map(({ uri }) => uri));
+        const newItems = playlist.tracks.items.map(song => {
+            return song.track
+        })
+        this.setState({ playlistTracks: newItems })
     }
 
     playSelectedPlaylist = async () => {
+        this.setState({ playlistName: this.state.playlistViewed.name });
         const { items } = await spfetch('/v1/playlists/' + this.state.playlistViewed.id + '/tracks');
         const newItems = items.map(song => {
             return song.track
@@ -155,21 +175,10 @@ class LoggedIn extends Component {
     // }
 
     handleSongSelect = (song) => {
-        console.log(this.state.playlist.tracks.items)
-        console.log(shuffle(this.state.playlist.tracks.items))
-        
-        let firstSong;
-        let shuffled = [];
-        this.state.playlist.tracks.items.map(res => {
-            if(res.track === song){
-                firstSong = res.track;
-            }
-        })
-        
-        // const newSong = []
-        // newSong.push(song)
-        // this.state.player.play(newSong.map(({ uri }) => uri));
-        // this.setState({ imageUrl: song.album.images[0].url });
+        const newSong = []
+        newSong.push(song)
+        this.state.player.play(newSong.map(({ uri }) => uri));
+        this.setState({ imageUrl: song.album.images[0].url });
     }
 
     handlePlayPreviousTrack = () => this.state.player.previousTrack();
@@ -220,12 +229,13 @@ class LoggedIn extends Component {
 
         // let pickPlaylist;
         let albumArtCover;
-        if (this.state.playlist) {
+        if (this.state.playlistTracks) {
             albumArtCover = (
                 <AlbumArt
-                    covers={this.state.playlist.tracks.items}
+                    covers={this.state.playlistTracks}
                     clicked={(song) => this.handleSongSelect(song)}
                     playSelectedPlaylist={this.playSelectedPlaylist}
+                    picked={this.state.pickedPlaylist}
                 />
             )
         }
@@ -321,7 +331,13 @@ class LoggedIn extends Component {
                                         color="primary"
                                         onClick={() => this.handlepickedPlaylist('me')}
                                     >
-                                        Saved Playlists</Button>
+                                        My Playlists</Button>
+                                    <Button
+                                        size="small"
+                                        color="primary"
+                                        onClick={() => this.handlepickedPlaylist('workout')}
+                                    >
+                                        Workout</Button>
                                 </CardActions>
                             </Card>
                         </div>
