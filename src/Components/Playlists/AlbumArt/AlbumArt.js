@@ -5,13 +5,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const albumArt = (props) => (
     <div className={classes.albumArtCover}>
-        <FontAwesomeIcon
-            onClick={props.playSelectedPlaylist}
-            className={classes.awesomeButt}
-            icon={faPlayCircle}
-        />
-        <h3>{props.picked.name}</h3>
+        <div className={classes.info}>
+            <FontAwesomeIcon
+                onClick={props.playSelectedPlaylist}
+                className={classes.awesomeButt}
+                icon={faPlayCircle}
+            />
+            <div className={classes.names}>
+                <span style={{fontSize: 30, fontWeight: "bold"}}>{props.picked.name}</span>
+                <span style={{fontSize: 15}}>{props.picked.followers.total} likes</span>
+            </div>
+        </div>
         {props.covers.map(song => {
+            // console.log(props.picked)
             return (
                 <div
                     className={classes.container}

@@ -27,19 +27,10 @@ class LoggedIn extends Component {
         id: null,
         player: null,
         playerState: {},
-        albumImg: null,
         playlistTracks: null,
-        playlist: null,
-        playlistName: null,
         pickedPlaylist: null,
         isPlayListOpen: false,
-        albumArt: null,
-        // search: '',
-        // searchPlaylist: null,
-        playlistViewed: {
-            id: null,
-            name: null,
-        },
+        playlistViewed: null,
         shuffle: false,
     };
 
@@ -81,11 +72,6 @@ class LoggedIn extends Component {
     }
 
     handlepickedPlaylist = async (playlist) => {
-        // if (this.state.isPlayListOpen ) {
-        //     this.setState({ isPlayListOpen: false });
-        //     return;
-        // }
-
         if (playlist === 'blm') {
             if (this.state.isPlayListOpen && !this.state.pickedPlaylist) {
                 this.setState({ isPlayListOpen: false })
@@ -125,20 +111,10 @@ class LoggedIn extends Component {
         }
     };
 
-    handlePlayTopTracks = async () => {
-        const { items } = await spfetch('/v1/me/top/tracks');
-        // console.log(items, 'top playlist')
-        this.setState({ playlist: items })
-        this.state.player.play(items.map(({ uri }) => uri));
-    };
-
     handlePickedPlaylistAlbumArt = async (id, name) => {
         const playlist = await spfetch('/v1/playlists/' + id);
         this.setState({
-            playlistViewed: {
-                id: id,
-                name: name,
-            }
+            playlistViewed: playlist
         })
         const newItems = playlist.tracks.items.map(song => {
             return song.track
@@ -147,12 +123,10 @@ class LoggedIn extends Component {
     }
 
     playSelectedPlaylist = async () => {
-        this.setState({ playlistName: this.state.playlistViewed.name });
         const { items } = await spfetch('/v1/playlists/' + this.state.playlistViewed.id + '/tracks');
         const newItems = items.map(song => {
             return song.track
         })
-        this.setState({ playlist: newItems })
         this.state.player.play(newItems.map(({ uri }) => uri));
         this.state.player.getCurrentState()
             .then(res => { })
@@ -162,17 +136,6 @@ class LoggedIn extends Component {
         // console.log(event.target.value)
         this.setState({ search: event.target.value })
     }
-
-    // handleSearchPlaylist = async () => {
-    //     // const newArr = this.state.search.split(" ")
-    //     // console.log(newArr)
-    //     const { playlists } = await spfetch("/v1/search?q=%20beach&type=playlist&limit=15");
-    //     const newItems = playlists.items.map(res => {
-    //         return res
-    //     });
-    //     this.setState({ searchPlaylist: newItems })
-    //     console.log(this.state.searchPlaylist, 'search')
-    // }
 
     handleSongSelect = (song) => {
         const newSong = []
@@ -185,11 +148,6 @@ class LoggedIn extends Component {
     handlePlayNextTrack = () => this.state.player.nextTrack();;
     handleResume = () => this.state.player.resume();
     handlePause = () => this.state.player.pause();
-
-    // handleClick = async () => {
-    //     await spfetch.logout()
-    // };
-
 
     render() {
         const {
@@ -235,7 +193,7 @@ class LoggedIn extends Component {
                     covers={this.state.playlistTracks}
                     clicked={(song) => this.handleSongSelect(song)}
                     playSelectedPlaylist={this.playSelectedPlaylist}
-                    picked={this.state.pickedPlaylist}
+                    picked={this.state.playlistViewed}
                 />
             )
         }
@@ -244,7 +202,7 @@ class LoggedIn extends Component {
             <div className={classes.App}>
                 <CssBaseline />
 
-                <AppBar position="static" style={{ marginBottom: 20, backgroundColor: 'black' }}>
+                <AppBar position="static" style={{ marginBottom: 40, backgroundColor: 'black' }}>
                     <Toolbar>
                         {/* <div>{currentAlbum ? currentAlbum.images[0] : null}</div> */}
                         <Typography variant="h6" color="inherit">
