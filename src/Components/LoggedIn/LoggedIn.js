@@ -156,7 +156,9 @@ class LoggedIn extends Component {
                 paused = true,
                 context,
                 track_window: {
-                    current_track: { name: currentTrackName,
+                    current_track: {
+                        name: currentTrackName,
+
                     } = {}
                 } = {},
                 restrictions: {
@@ -166,9 +168,12 @@ class LoggedIn extends Component {
                 } = {}
             }
         } = this.state;
-        let albumCover = this.state.playerState.track_window
+        let albumCover = this.state.playerState.track_window;
+        let artistPlaying;
         if (typeof albumCover !== "undefined") {
+            // console.log(this.state.playerState.track_window.current_track.artists[0].name)
             albumCover = this.state.playerState.track_window.current_track.album.images[0].url;
+            artistPlaying =  this.state.playerState.track_window.current_track.artists[0].name;
         }
 
 
@@ -207,6 +212,10 @@ class LoggedIn extends Component {
                         {/* <div>{currentAlbum ? currentAlbum.images[0] : null}</div> */}
                         <Typography variant="h6" color="inherit">
                             {currentTrackName || null}
+                        </Typography>
+                        {currentTrackName ? <pre> <b style={{fontWeight: 'bold', fontSize:15}}>-</b> </pre> : null}
+                        <Typography variant="h6" color="inherit">
+                            {artistPlaying || null}
                         </Typography>
                         <div className={classes.grow} />
                         {!this.state.shuffle ? (
