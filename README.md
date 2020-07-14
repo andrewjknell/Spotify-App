@@ -23,9 +23,3 @@ We've prepared this repo to be used with [now](https://zeit.co/now) – a powerf
 If you want to set this up for your app, sign up at https://zeit.co and then go to https://zeit.co/github to connect to GitHub and enable it for your repo.
 
 Note that you have to change the [alias](now.json#L3) property in [now.json](now.json) to point to one of your own (you can make one up, as long as it's not already taken), since you won't be able to override our alias.
-
-The build is driven by the provided [Dockerfile](Dockerfile), which is responsible for setting up the build environment, installing dependencies, building the app and running the tests.
-
-Static apps deployed using [now](https://zeit.co/now) is deployed to CloudFlare's global CDN network, meaning you'll have insanely good latency and caching out-of-the-box.
-
-If you need to run a `node` server, [now](https://zeit.co/now) can help you there as well, even on their free tier, or you can pick whichever hosting provider you want.
