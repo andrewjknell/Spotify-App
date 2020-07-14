@@ -1,6 +1,6 @@
 {
   "type": "static",
-  "alias": "andrew-spotify-app.now.sh",
+  "alias": "spotify-app-alpha.vercel.app",
   "static": {
     "rewrites": [
       {
